@@ -1,10 +1,10 @@
-﻿import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-import Navbar from "./components/Navbar";
-import Dashboard from "./pages/Dashboard";
-import Editor from "./pages/Editor";
-import Runs from "./pages/Runs";
-import Workflows from "./pages/Workflows";
+import Navbar from './components/Navbar'
+import Dashboard from './pages/Dashboard'
+import Workflows from './pages/Workflows'
+import Editor from './pages/Editor'
+import Runs from './pages/Runs'
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
         <Route path="/runs" element={<Runs />} />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App
