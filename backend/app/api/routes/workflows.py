@@ -10,6 +10,8 @@ from app.schemas.workflow import WorkflowCreate, WorkflowRead, WorkflowUpdate
 
 router = APIRouter()
 
+DEFAULT_USER_ID = UUID("00000000-0000-0000-0000-000000000001")
+
 
 @router.get("/", response_model=list[WorkflowRead])
 def list_workflows(db: Session = Depends(get_db)):
@@ -27,7 +29,13 @@ def get_workflow(id: UUID, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=WorkflowRead, status_code=status.HTTP_201_CREATED)
 def create_workflow(payload: WorkflowCreate, db: Session = Depends(get_db)):
-    workflow = Workflow(**payload.model_dump(by_alias=False))
+    workflow = Workflow(
+        name=payload.name,
+        user_id=DEFAULT_USER_ID,
+        trigger=payload.trigger,
+        steps=payload.steps,
+        edges=payload.edges,
+    )
     db.add(workflow)
     db.commit()
     db.refresh(workflow)

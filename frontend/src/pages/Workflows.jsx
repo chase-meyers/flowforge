@@ -1,9 +1,11 @@
 ﻿import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { apiGet } from "../lib/api";
 
 function Workflows() {
   const [workflows, setWorkflows] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchWorkflows() {
@@ -14,16 +16,22 @@ function Workflows() {
     fetchWorkflows();
   }, []);
 
-  if (workflows.length === 0) {
-    return <div>No workflows yet</div>;
-  }
-
   return (
-    <ul>
-      {workflows.map((workflow) => (
-        <li key={workflow.id}>{workflow.name}</li>
-      ))}
-    </ul>
+    <div>
+      <button type="button" onClick={() => navigate("/workflows/new")}>
+        Create Workflow
+      </button>
+
+      {workflows.length === 0 ? (
+        <div>No workflows yet</div>
+      ) : (
+        <ul>
+          {workflows.map((workflow) => (
+            <li key={workflow.id}>{workflow.name}</li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
