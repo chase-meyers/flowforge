@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { apiGet } from "../lib/api";
 
@@ -27,7 +27,9 @@ function Workflows() {
       ) : (
         <ul>
           {workflows.map((workflow) => (
-            <li key={workflow.id}>{workflow.name}</li>
+            <li key={workflow.id}>
+              <Link to={`/workflows/${workflow.id}`}>{workflow.name}</Link>
+            </li>
           ))}
         </ul>
       )}
