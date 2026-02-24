@@ -1,11 +1,12 @@
 ﻿import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { apiGet } from "../lib/api";
+import { apiGet, apiPost } from "../lib/api";
 
 function WorkflowDetail() {
   const { id } = useParams();
   const [workflow, setWorkflow] = useState(null);
+  const [runMessage, setRunMessage] = useState("");
 
   useEffect(() => {
     async function fetchWorkflow() {
@@ -16,6 +17,11 @@ function WorkflowDetail() {
     fetchWorkflow();
   }, [id]);
 
+  async function handleRunWorkflow() {
+    await apiPost(`/workflows/${id}/run`);
+    setRunMessage("Workflow run created successfully.");
+  }
+
   if (!workflow) {
     return <div>Loading...</div>;
   }
@@ -23,6 +29,10 @@ function WorkflowDetail() {
   return (
     <div>
       <h1>{workflow.name}</h1>
+      <button type="button" onClick={handleRunWorkflow}>
+        Run Workflow
+      </button>
+      {runMessage && <div>{runMessage}</div>}
       <div>
         <h2>Trigger</h2>
         <pre>{JSON.stringify(workflow.trigger, null, 2)}</pre>

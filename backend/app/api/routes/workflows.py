@@ -1,16 +1,26 @@
 ﻿from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.models.workflow import Workflow
+from app.models.workflow_run import WorkflowRun
 from app.schemas.workflow import WorkflowCreate, WorkflowRead, WorkflowUpdate
 
 router = APIRouter()
 
 DEFAULT_USER_ID = UUID("00000000-0000-0000-0000-000000000001")
+
+
+class WorkflowRunRead(BaseModel):
+    id: UUID
+    workflow_id: UUID
+    status: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 @router.get("/", response_model=list[WorkflowRead])
@@ -40,6 +50,28 @@ def create_workflow(payload: WorkflowCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(workflow)
     return workflow
+
+
+@router.post("/{id}/run", response_model=WorkflowRunRead, status_code=status.HTTP_201_CREATED)
+def run_workflow(id: UUID, db: Session = Depends(get_db)):
+    workflow = db.get(Workflow, id)
+    if workflow is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+
+    workflow_run = WorkflowRun(
+        name=workflow.name,
+        status="pending",
+        user_id=workflow.user_id,
+        workflow_id=workflow.id,
+        trigger=workflow.trigger,
+        steps=workflow.steps,
+        edges=workflow.edges,
+    )
+
+    db.add(workflow_run)
+    db.commit()
+    db.refresh(workflow_run)
+    return workflow_run
 
 
 @router.put("/{id}", response_model=WorkflowRead)

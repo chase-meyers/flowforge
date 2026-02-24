@@ -11,6 +11,7 @@ class WorkflowRun(Base, TimestampMixin):
 
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
 
     user_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id"), nullable=False)
     workflow_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("workflows.id"), nullable=False)
